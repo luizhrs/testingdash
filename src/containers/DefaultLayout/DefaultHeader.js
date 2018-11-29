@@ -29,7 +29,7 @@ class DefaultHeader extends Component {
 
         <Nav className="d-md-down-none" navbar>
           <NavItem className="px-3">
-            <NavLink href="#">Dashboard</NavLink>
+            <NavLink href="#/">Dashboard</NavLink>
           </NavItem>
           <NavItem className="px-3">
             <NavLink href="#/users">Users</NavLink>
@@ -70,7 +70,7 @@ class DefaultHeader extends Component {
           </AppHeaderDropdown>
         </Nav>
         <AppAsideToggler className="d-md-down-none" />
-        {/*<AppAsideToggler className="d-lg-none" mobile />*/}
+        <AppAsideToggler className="d-lg-none" mobile />
       </React.Fragment>
     );
   }

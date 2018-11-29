@@ -9,9 +9,9 @@ export default {
         text: '',
       },
     },
-    /*{
+   /* {
       title: true,
-      name: 'Theme',
+      name: 'Cadastros',
       wrapper: {            // optional wrapper object
         element: '',        // required valid HTML5 element tag
         attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
@@ -35,17 +35,35 @@ export default {
         element: '',
         attributes: {},
       },
-    },*/
+    },
     {
-      name: 'Ficha de Atendimento',
-      url: '/fichaatendimento',
-      icon: 'icon-calculator',
+      name: 'Cadastro do Assistido',
+      url: '/cadastroassistido',
+      icon: 'cui-user-follow icons font-1xl mt-2',
       badge: {
         variant: 'info',
         text: '',
       },
     },
-    /*{
+    {
+      title: true,
+      name: 'Formulários',
+      wrapper: {            // optional wrapper object
+        element: '',        // required valid HTML5 element tag
+        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+      },
+      class: ''             // optional class names space delimited list for title item ex: "text-center"
+    },   
+    {
+      name: 'Novo Atendimento',
+      url: '/fichaatendimento',
+      icon: 'fa fa-user-o fa-lg mt-2',
+      badge: {
+        variant: 'info',
+        text: '',
+      },
+    },
+    {
       name: 'Base',
       url: '/base',
       icon: 'icon-puzzle',

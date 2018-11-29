@@ -1,5 +1,4 @@
 import React, { Component } from "react"
-import axios from "../../../axios-instance"
 import Spinner from "../../../assets/Spinner/Spinner"
 import base from '../../../base'
 
@@ -34,43 +33,18 @@ import {
   Typography
 } from '@smooth-ui/core-sc'
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-
-// ****************************************
-//⬇️ THIS IS WHERE ALL THE MAGIC HAPPENS ⬇️
-// ****************************************
-const adapt /* ⬅️ this is a HOC */ = Component => ({
-  input,
-  meta: { valid },
-  ...rest
-}) => <Component {...input} {...rest} valid={valid} />;
-const AdaptedInput = adapt(Input);
-const AdaptedCheckbox = adapt(Checkbox);
-const AdaptedRadio = adapt(Radio);
-const AdaptedTextarea = adapt(Textarea);
-
-const normalizeRG = value => {
-  if (!value) return value;
-  const onlyNums = value.replace(/[^\d]/g, "");
-  if (onlyNums.length <= 2) return onlyNums;
-  if (onlyNums.length <= 5)
-    return `${onlyNums.slice(0, 2)}.${onlyNums.slice(2, 5)}`;
-  if (onlyNums.lenght <= 8)
-   return `${onlyNums.slice(0, 2)}.${onlyNums.slice(2, 5)}.${onlyNums.slice(5, 8)}`;
-  return `${onlyNums.slice(0, 2)}.${onlyNums.slice(2, 5)}.${onlyNums.slice(5, 8)}-${onlyNums.slice(8, 9)}`;
-}
-
-const normalizeCPF = value => {
-  if (!value) return value;
-  const onlyNums = value.replace(/[^\d]/g, "");
-  if (onlyNums.length <= 3) return onlyNums;
-  if (onlyNums.length <= 3)
-    return `${onlyNums.slice(0, 3)}.${onlyNums.slice(3, 6)}`;
-  if (onlyNums.lenght <= 9)
-   return `${onlyNums.slice(0, 3)}.${onlyNums.slice(3, 6)}.${onlyNums.slice(6, 9)}`;
-  return `${onlyNums.slice(0, 3)}.${onlyNums.slice(3, 6)}.${onlyNums.slice(6, 9)}-${onlyNums.slice(9, 11)}`;
-}
+import { AdaptedInput, 
+         AdaptedCheckbox,
+         AdaptedRadio,
+         AdaptedTextarea,
+         normalizeRG,
+         normalizeCPF,
+         required,
+         mustBeNumber,
+         minValue,
+         composeValidators,
+         documentoUtilizado
+          } from '../../../assets/Validations/Validations'
 
 const Error = ({ name }) => (
   <Field name={name} subscription={{ error: true, touched: true }}>
@@ -81,45 +55,6 @@ const Error = ({ name }) => (
     }
   </Field>
 );
-// ****************************************
-//⬆️ THIS IS WHERE ALL THE MAGIC HAPPENS ⬆️
-// ****************************************
-
-const required = value => (value ? undefined : "Required");
-
-const mustBeNumber = value => (isNaN(value) ? 'Must be a number' : undefined)
-
-const minValue = min => value =>
-  isNaN(value) || value >= min ? undefined : `Should be greater than ${min}`
-
-const composeValidators = (...validators) => value =>
-  validators.reduce((error, validator) => error || validator(value), undefined)
-
-const simpleMemoize = fn => {
-  let lastArg
-  let lastResult
-  return arg => {
-    if (arg !== lastArg) {
-      lastArg = arg
-      lastResult = fn(arg)
-    }
-    return lastResult
-  }
-}
-
-const documentoUtilizado = simpleMemoize(async value => {
-
-  if (!value) {
-    return 'Required'
-  }
-  await sleep(400)
-  if (
-    ~['12.345.678-9'].indexOf(value /*&& value.toLowerCase()*/)
-  ) {
-    return 'Username taken!'
-  }
-})
-
 
 class FichaAtendimento extends Component {
   constructor(props) {
@@ -133,17 +68,35 @@ class FichaAtendimento extends Component {
   }
 
   componentWillMount() {
-    base.fetch('demandas', {
+    /*  base.fetch('demandas', {
+        context: this,
+        asArray: true
+      }).then(data => {
+        //console.log(data);   
+        this.setState({ 
+          demandas: Object.values(data)
+        })
+        this.setState({ loading: false })
+      }).catch(error => {
+        
+      })*/
+    base.get("demandas", {
       context: this,
-      asArray: true
+      // asArray: true,
+      // query: (ref) => ref.where('name', '==', 'Atendimento Médico'),
     }).then(data => {
-      //console.log(data);   
-      this.setState({ 
-        demandas: Object.values(data)
+      let arr = []
+      Object.values(data).map(demanda => {
+        arr.push(demanda.name)
+      })
+      console.log(arr)
+      this.setState({
+        demandas: arr
       })
       this.setState({ loading: false })
-    }).catch(error => {
-      
+      //do something with data
+    }).catch(err => {
+      //handle error
     })
   }
 
@@ -152,12 +105,19 @@ class FichaAtendimento extends Component {
   }*/
 
   componentDidMount() {
-  
+
   }
 
   onSubmit = async values => {
-   
-      let immediatelyAvailableReference = base.push('data', {
+
+    base.addToCollection('assistidos', values)
+      .then(() => {
+        console.log(values)
+        //document is added to the collection
+      }).catch(err => {
+        //handle error
+      });
+    /*  let immediatelyAvailableReference = base.push('data', {
         data: values,
         then(err){
           if(!err){
@@ -167,8 +127,8 @@ class FichaAtendimento extends Component {
       });
       //available immediately, you don't have to wait for the callback to be called
       let generatedKey = immediatelyAvailableReference.key;
-      console.log(generatedKey)
-    
+      console.log(generatedKey)*/
+
   };
 
   render() {
@@ -221,11 +181,11 @@ class FichaAtendimento extends Component {
                           <Label>RG</Label>
                           <Field
                             key="rg"
-                            name="rg"                            
+                            name="rg"
                             component={AdaptedInput}
                             placeholder="99.999.999-9"
                             validate={composeValidators(required, documentoUtilizado)}
-                            parse={normalizeRG}                            
+                            parse={normalizeRG}
                             control
                           />
                           <Error name="rg" />
@@ -241,7 +201,7 @@ class FichaAtendimento extends Component {
                             component={AdaptedInput}
                             placeholder="999.999.999-99"
                             //validate={required}
-                            parse={normalizeCPF}                            
+                            parse={normalizeCPF}
                             control
                           />
                           <Error name="CPF" />
@@ -251,7 +211,7 @@ class FichaAtendimento extends Component {
                       <Col sm={3}>
                         <FormGroup>
                           <Label>Data de Nascimento</Label>
-                           <Field
+                          <Field
                             key="nascimento"
                             name="nascimento"
                             component={AdaptedInput}
@@ -259,9 +219,40 @@ class FichaAtendimento extends Component {
                             placeholder="nascimento"
                             //validate={required}
                             control
-                          /> 
-                          
-                          <Error name="nascimento" />                          
+                          />
+
+                          <Error name="nascimento" />
+                        </FormGroup>
+                      </Col>
+
+                      <Col sm={3}>
+                        <FormGroup>
+                          <Label>Sexo</Label>
+                          <RadioGroup>
+
+                            <FormCheck>
+                              <Field
+                                name="sexo"
+                                component={AdaptedRadio}
+                                type="radio"
+                                id="masc"
+                                value="masc"
+                              />
+                              <FormCheckLabel htmlFor="masc">Masculino</FormCheckLabel>
+                            </FormCheck>
+
+                            <FormCheck>
+                              <Field
+                                name="sexo"
+                                component={AdaptedRadio}
+                                type="radio"
+                                id="fem"
+                                value="fem"
+                              />
+                              <FormCheckLabel htmlFor="fem">Feminino</FormCheckLabel>
+                            </FormCheck>
+
+                          </RadioGroup>
                         </FormGroup>
                       </Col>
                     </Row>
@@ -369,25 +360,9 @@ class FichaAtendimento extends Component {
                       {checkDemandas}
                     </FormGroup>
                   </Card>
+                  
                   <FormGroup>
-                    <Label>Best Stooge</Label>
-                    <RadioGroup>
-
-                      <FormCheck>
-                        <Field
-                          name="stooge"
-                          component={AdaptedRadio}
-                          type="radio"
-                          id="larry"
-                          value="larry"
-                        />
-                        <FormCheckLabel htmlFor="larry">Larry</FormCheckLabel>
-                      </FormCheck>
-
-                    </RadioGroup>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>Notes</Label>
+                    <Label>Observações</Label>
                     <Field
                       name="notes"
                       component={AdaptedTextarea}

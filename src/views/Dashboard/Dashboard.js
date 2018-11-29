@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 import base from '../../base'
 import Modal from '../../components/Modals/Modal'
-import { Bar, Line } from 'react-chartjs-2';
+import { Link } from 'react-router-dom'
+import { Bar, Line } from 'react-chartjs-2'
 import { Form, Field } from "react-final-form"
 import MaskedInput from 'react-text-mask'
 import {
@@ -19,7 +20,7 @@ import {
   Progress,
   Row,
   Table,
-} from 'reactstrap';
+} from 'reactstrap'
 
 import {
   Input,
@@ -27,9 +28,6 @@ import {
   FormGroup
 } from '@smooth-ui/core-sc'
 
-import formatString from "format-string-by-pattern"
-
-import Widget03 from '../../views/Widgets/Widget03'
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
 
@@ -62,24 +60,6 @@ const simpleMemoize = fn => {
     return lastResult
   }
 }
-
-const documentoUtilizado = simpleMemoize(async value => {
-
-  if (!value) {
-    return 'Required'
-  }
-
-  if (
-    ~['12.345.678-9'].indexOf(value /*&& value.toLowerCase()*/)
-  ) {
-    return 'Username taken!'
-  }
-})
-
-const required = value => (value ? undefined : "Required");
-
-const composeValidators = (...validators) => value =>
-  validators.reduce((error, validator) => error || validator(value), undefined)
 
 const brandPrimary = getStyle('--primary')
 const brandSuccess = getStyle('--success')
@@ -169,40 +149,11 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
 
-    this.toggle = this.toggle.bind(this);
-    this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
-    this.cancelClicked = this.cancelClicked.bind(this);
     this.novoAssistido = this.novoAssistido.bind(this);
     this.modificarRG = this.modificarRG.bind(this);
     this.verificarRG = this.verificarRG.bind(this);
     this.getAssistido = this.getAssistido.bind(this);
 
-    this.state = {
-      dropdownOpen: false,
-      radioSelected: 2,
-      modalOpen: false,
-      modalClass: 'modal-primary',
-      rg: ''
-    };
-  }
-
-
-  toggle() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen,
-    });
-  }
-
-  onRadioBtnClick(radioSelected) {
-    this.setState({
-      radioSelected: radioSelected,
-    });
-  }
-
-  cancelClicked() {
-    this.setState({
-      modalOpen: !this.state.modalOpen
-    })
   }
 
   novoAssistido() {
@@ -248,32 +199,9 @@ class Dashboard extends Component {
     return (
       <div className="animated fadeIn">
 
-          <Modal
-            isOpen={this.state.modalOpen}
-            title="Teste"
-            cancelled={this.cancelClicked}
-            classType={this.state.modalClass}
-          >
-            <form>
-              <MaskedInput
-                mask={[/[1-9]/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/]}
-                className="form-control"
-                placeholder="Digite o RG"
-                guide={false}
-                id="rg"
-                onBlur={this.modificarRG}
-                onChange={() => { }}
-              />
-              <br></br>
-              <Button onClick={this.verificarRG} color="primary" >Verificar RG</Button>
-            </form>
-          </Modal>
         <Row>
           <Col>
             <Card>
-              <CardHeader>
-                Informações gerais - Assistidos
-              </CardHeader>
               <CardBody>
                 <Row>
                   <Col xs="12" md="6" xl="6">
@@ -473,242 +401,25 @@ class Dashboard extends Component {
                         </div>
                       </div>
                       <div className="divider text-center">
-                        <Button color="link" size="sm" className="text-muted" data-toggle="tooltip" data-placement="top"
-                          title="" data-original-title="show more"><i className="icon-options"></i></Button>
+                        
+                        <Button 
+                          
+                          color="link" 
+                          size="sm" 
+                          className="text-muted" 
+                          data-toggle="tooltip" 
+                          data-placement="top"
+                          title="" 
+                          data-original-title="show more">
+                          <i className="icon-options"></i>
+                          </Button>
+                        
                       </div>
                     </ul>
                   </Col>
                 </Row>
-                <br />
-                <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
-                  <thead className="thead-light">
-                    <tr>
-                      <th className="text-center"><i className="icon-people"></i></th>
-                      <th>User</th>
-                      <th className="text-center">Country</th>
-                      <th>Usage</th>
-                      <th className="text-center">Payment Method</th>
-                      <th>Activity</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/1.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-success"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Yiorgos Avraamu</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-us h4 mb-0" title="us" id="us"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>50%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="success" value="50" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-cc-mastercard" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>10 sec ago</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/2.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-danger"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Avram Tarasios</div>
-                        <div className="small text-muted">
-
-                          <span>Recurring</span> | Registered: Jan 1, 2015
-                      </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-br h4 mb-0" title="br" id="br"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>10%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="info" value="10" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-cc-visa" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>5 minutes ago</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/3.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-warning"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Quintin Ed</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-in h4 mb-0" title="in" id="in"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>74%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="warning" value="74" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-cc-stripe" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>1 hour ago</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/4.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-secondary"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Enéas Kwadwo</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-fr h4 mb-0" title="fr" id="fr"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>98%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="danger" value="98" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-paypal" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>Last month</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/5.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-success"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Agapetus Tadeáš</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-es h4 mb-0" title="es" id="es"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>22%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="info" value="22" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-google-wallet" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>Last week</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-danger"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Friderik Dávid</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-pl h4 mb-0" title="pl" id="pl"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>43%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="success" value="43" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-cc-amex" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>Yesterday</strong>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
+                <br />                
               </CardBody>
-              <CardFooter>
-                <Button color="primary" onClick={this.novoAssistido}>Novo Assistido</Button>
-              </CardFooter>
             </Card>
           </Col>
         </Row>
