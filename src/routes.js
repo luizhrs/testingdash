@@ -12,21 +12,6 @@ const Dashboard = Loadable({
   loading: Loading,
 });
 
-const FichaAtendimento1 = Loadable({
-  loader: () => import('./views/Formularios/FichaAtendimento'),
-  loading: Loading,
-});
-
-const FichaAtendimento = Loadable({
-  loader: () => import('./views/Formularios/Ficha-Atendimento/FichaAtendimento'),
-  loading: Loading,
-});
-
-const CadastroAssistido = Loadable({
-  loader: () => import('./views/Formularios/CadastroAssistido/CadastroAssistido'),
-  loading: Loading,
-});
-
 const User = Loadable({
   loader: () => import('./views/Users/User'),
   loading: Loading,

@@ -1,65 +1,19 @@
 import React, { Component } from 'react'
 
 import base from '../../base'
-import Modal from '../../components/Modals/Modal'
-import { Link } from 'react-router-dom'
-import { Bar, Line } from 'react-chartjs-2'
-import { Form, Field } from "react-final-form"
-import MaskedInput from 'react-text-mask'
+import { Line } from 'react-chartjs-2'
 import {
   Badge,
   Button,
   Card,
   CardBody,
-  CardFooter,
-  CardHeader,
-  CardTitle,
   Col,
-  Label,
-  FormFeedback,
   Progress,
   Row,
-  Table,
 } from 'reactstrap'
 
-import {
-  Input,
-  ControlFeedback,
-  FormGroup
-} from '@smooth-ui/core-sc'
-
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
-import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
-
-const adapt /* ⬅️ this is a HOC */ = Component => ({
-  input,
-  meta: { valid },
-  ...rest
-}) => <Component {...input} {...rest} valid={valid} />;
-const AdaptedInput = adapt(Input);
-
-const normalizeRG = value => {
-  if (!value) return value;
-  const onlyNums = value.replace(/[^\d]/g, "");
-  if (onlyNums.length <= 2) return onlyNums;
-  if (onlyNums.length <= 5)
-    return `${onlyNums.slice(0, 2)}.${onlyNums.slice(2, 5)}`;
-  if (onlyNums.lenght <= 8)
-    return `${onlyNums.slice(0, 2)}.${onlyNums.slice(2, 5)}.${onlyNums.slice(5, 8)}`;
-  return `${onlyNums.slice(0, 2)}.${onlyNums.slice(2, 5)}.${onlyNums.slice(5, 8)}-${onlyNums.slice(8, 9)}`;
-}
-
-const simpleMemoize = fn => {
-  let lastArg
-  let lastResult
-  return arg => {
-    if (arg !== lastArg) {
-      lastArg = arg
-      lastResult = fn(arg)
-    }
-    return lastResult
-  }
-}
+import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities'
 
 const brandPrimary = getStyle('--primary')
 const brandSuccess = getStyle('--success')
