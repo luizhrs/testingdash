@@ -1,36 +1,46 @@
 import React, { Component } from 'react';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+//import { HashRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Router, Route, Switch } from 'react-router-dom'
 import './App.scss';
+import { connect } from 'react-redux'
 
 // Containers
 import { DefaultLayout } from './containers';
-// Pages
-import { Login, Page404, Page500, Register } from './views/Pages';
 
-// import { renderRoutes } from 'react-router-config';
+import { getUser } from './store/Actions'
+
+
+let layout = (<div></div>)
+  
 
 class App extends Component {
-  constructor (){
-    super()
 
-    this.state = {
-      user: null
+  componentWillMount() {
+    this.props.getUser()
+    if(this.props.user.loading === false && this.props.user.email === undefined) {
+      this.props.history.replace('/login')
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.user.loading === false && nextProps.user.email === undefined) {      
+      this.props.history.replace('/login')
+    }
+  }
+
+  componentDidMount() {
+    layout = <DefaultLayout/>
+  }
+  
   render() {
     return (
-      <HashRouter>
-        <Switch>
-          <Route exact path="/login" name="Login Page" component={Login} />
-          <Route exact path="/register" name="Register Page" component={Register} />
-          <Route exact path="/404" name="Page 404" component={Page404} />
-          <Route exact path="/500" name="Page 500" component={Page500} />
-          <Route path="/" name="Home" component={DefaultLayout} />
-        </Switch>
-      </HashRouter>
+      <div>{layout}</div>
     );
   }
 }
 
-export default App;
+let app = connect((state, ownProps) =>({
+  user: state.user
+}), { getUser })(App)
+
+export default app;
